@@ -1,0 +1,14 @@
+npm init
+cd mongoDbregistration
+npm i express
+npm i mongoose // help to connect with mongoDB
+npm i hbs // hbs -> handle bars
+mkdir src // to make a source folder inside mongoDbregistration
+cd src // come inside the src folder
+mkdir db
+mkdir models
+app.js inside the src
+connc.js inside the db
+now app.js mai work we already did the same
+connc.js mai connect with mongoose so the link is basically open the mongoCompass and copy paste the local host and then add a name like jnvMembers .are terminal pe khol do wha pe number hoga 127.0.0.1 use bhi laao
+ "dev" : "nodemon src/app.js -e js,hbs" // jaise hi in file or folders mai change hoga tumko server mai bhi khud change karna hai 
