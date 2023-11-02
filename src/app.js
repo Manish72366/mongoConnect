@@ -1,13 +1,14 @@
 const express = require("express");
-const path = require("path");
-const hbs = require("hbs");
 const app = express(); // so app ke ander express ki properties , methods and all other things came.
+const path = require("path");
+const bcrypt = require("bcryptjs");
+const hbs = require("hbs");
 require("./db/conn");
 // want to use json file in my app so then i can store the data
 app.use(express.json());
 app.use(express.urlencoded({extended:false})); // this means that whatever data i am getting from the file i want it to me. u can't show undefined data.
 const Register = require("./models/registers");
-const port = process.env.PORT || 3000; // process.env.PORT means that we please provide a port number for any user in any system and 3000 for localhost.
+const port = process.env.PORT || 8000; // process.env.PORT means that we please provide a port number for any user in any system and 3000 for localhost.
 // static ->
 const static_path = path.join(__dirname, "../public");
 app.use(express.static(static_path)); // using that html file which is inside the public folder
@@ -37,10 +38,12 @@ app.post("/register", async (req, res) =>
     try{
       const password = req.body.password;
       const cpassword = req.body.confirmPassword;
+      const phoneLen = req.body.phone;
+      if(phoneLen.length != 10) res.status(400).send("please enter a correct number it's my humble request");
       if(password !== cpassword) res.status(400).send("password should be same with confirm password");
       else
       {
-            // data created.
+            // data created.registerEmployee is instance of Register means (document) hai..
            const registerEmployee =  new Register({
             firstname : req.body.firstname,
             lastname : req.body.lastname,
@@ -56,6 +59,9 @@ app.post("/register", async (req, res) =>
             password : req.body.password,
             confirmPassword : req.body.confirmPassword
            })
+           // generating token for the user Authentication..
+           const token = await registerEmployee.generateAuthToken();
+           // password hash using middleware
           const registered =  await registerEmployee.save();
           res.status(201).render("index"); // agr sahi ho gya sab kuch so status 201 and index mai chl jaao.
       }
@@ -75,9 +81,12 @@ app.post("/login", async(req, res) =>{
   try{
      const email = req.body.email;
      const password = req.body.password;
-     const useremail = await Register.findOne({email : email});
-     // so we came here only if the above useremail get a valid response that yes someone with the username is here.
-     if(useremail.password === password)
+     const user = await Register.findOne({email : email}); // returns a object (document)..
+     const ismatch = await bcrypt.compare(password , user.password); // bcrypt match karega uska hashing code ko hamare abhi current password ko fill kiye ko.
+     const token = await user.generateAuthToken();
+     console.log('manish ' + token);
+
+     if(ismatch)
      {
       res.status(201).render("index");
      }else {
@@ -87,6 +96,30 @@ app.post("/login", async(req, res) =>{
       res.status(400).send("No user found");
   }
 })
+// const  securePassword = async (password) =>{
+//   const passwordHash = await bcrypt.hash(password , 10); // 10 means the number of rounds as more number of rounds more will be security till 12 is there but more number of rounds so compilation will be slow.
+//   
+//   console.log(passwordmatch);
+// }
+// securePassword("manish");
+
+
+// Authentication using jsonwebtoken..
+// https://jwt.io/ refer jsonwebtoken website..
+const jwt = require('jsonwebtoken');
+const createToken = async() =>{
+  // generate the token...
+  // myselfmanishmamgainandbrothermayank security key which i made must be more than 32 length
+  // expiresIn : "2 hours" means the token will expires after 2 hours so website bhul jayegi tumhe.
+  const token = await jwt.sign({_id : "6525a8cd7f5eb2fa2dc78c49"} , "myselfmanishmamgainandbrothermayank", {
+    expiresIn:"2 hours"
+  });
+  // console.log(token);
+  const userVer = await jwt.verify(token , "myselfmanishmamgainandbrothermayank");
+  console.log(userVer);
+}
+// createToken();
+
 app.listen(port , () =>
 {
     console.log(`server is  running at port no ${port}`);

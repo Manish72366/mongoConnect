@@ -10,5 +10,12 @@ mkdir models
 app.js inside the src
 connc.js inside the db
 now app.js mai work we already did the same
-connc.js mai connect with mongoose so the link is basically open the mongoCompass and copy paste the local host and then add a name like jnvMembers .are terminal pe khol do wha pe number hoga 127.0.0.1 use bhi laao
+connc.js mai connect with mongoose so the link is basically open the mongoCompass and copy paste the local host and then add a name like jnvMembers .are terminal pe khol do wha pe nucmber hoga 127.0.0.1 use bhi laao
  "dev" : "nodemon src/app.js -e js,hbs" // jaise hi in file or folders mai change hoga tumko server mai bhi khud change karna hai 
+ nodemon app.js to run the app first go that directory where you are, means inside src as the app.js is there then nodemon app.js
+ cd .. se bhr aa jaao src ke 
+ // for security purpose we have two things 1 -> encryption and hashing 
+ // manish -> hkapes -> manish so in encryption there is two way communication so we don't use this as manish stored as hkapes (encoded) but then it can decode easily to manish
+ // hashing one way communication means
+ // manish -> dhchhjehjchhcjkdhcjdc.chdjck but one problem is that it is based on some algo not randomly it is so some hashing values still can be decode within 2s ex for md5 it is 2s but for some other like bcrypt js hacking could takes more thatn 3yrs
+ // so install bcryptjs
